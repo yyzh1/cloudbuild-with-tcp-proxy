@@ -1,3 +1,4 @@
+#!/bin/bash
 # Copyright 2022 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,20 +14,19 @@
 # limitations under the License.
 
 
-#!/bin/bash
 set -e
 
 echo "START: Connecting to proxy"
 
 # avoid hitting issue with login profile size
 # (https://github.com/kyma-project/test-infra/issues/93)
-for i in $(gcloud compute os-login ssh-keys list | grep -v FINGERPRINT); do echo $i; gcloud compute os-login ssh-keys remove --key $i; done
+for i in $(gcloud compute os-login ssh-keys list | grep -v FINGERPRINT); do echo "$i"; gcloud compute os-login ssh-keys remove --key "$i"; done
 
 gcloud compute ssh \
-  --project=$PROJECT_ID \
-  --zone=$ZONE \
-  --tunnel-through-iap $PROXY_SERVER \
-  -- -L 0.0.0.0:$PORT:localhost:$PORT -Nqf
+  --project="$PROJECT_ID" \
+  --zone="$ZONE" \
+  --tunnel-through-iap "$PROXY_SERVER" \
+  -- -L 0.0.0.0:"$PORT":localhost:"$PORT" -Nqf
   # tail tinyproxy log only works for local
   # --command='sudo tail -f /var/log/tinyproxy/tinyproxy.log' \
 
